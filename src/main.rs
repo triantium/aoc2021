@@ -1,7 +1,6 @@
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
-use atoi::atoi;
 
 
 fn main() {
@@ -9,17 +8,34 @@ fn main() {
         // Consumes the iterator, returns an (Optional) String
         let mut prev = i32::MAX ;
         let mut count = 0 ;
+        let mut vec = Vec::new();
         for line in lines {
             if let Ok(ip) = line {
+
                 let z = (ip.to_string()).parse::<i32>().unwrap();
+                vec.push(z);
                 if z > prev {
                     count = count + 1;
                 }
                 prev  = z;
-                println!("{}", z);
+                //println!("{}", z);
             }
         }
-        println!("{}",count)
+        println!("count: {}",count);
+
+        println!("count: {}",vec.len());
+        let mut slidecount = 0 ;
+        prev = i32::MAX ;
+        let len=vec.len()-2;
+        for i in 0..len {
+            let measurement = vec.get(i).unwrap() + vec.get(i+1).unwrap() + vec.get(i+2).unwrap();
+            if measurement > prev {
+                slidecount = slidecount + 1;
+            }
+            prev=measurement;
+
+        }
+        println!("slidecount: {}",slidecount);
     }
 }
 
