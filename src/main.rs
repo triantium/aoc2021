@@ -4,26 +4,32 @@ mod utils;
 struct Submarine {
     horizontal: i32,
     depth: i32,
+    aim: i32,
 }
 
 struct Command {
     action: String,
-    duration: i32,
+    units: i32,
 }
 
 
 fn main() {
-    let mut submarine= Submarine{horizontal:0,depth:0};
+    let mut submarine= Submarine{horizontal:0,depth:0,aim:0};
     let instructions=utils::read_file("inputs/2.txt");
     for instruction in instructions.iter() {
         let split = instruction.split_whitespace().collect::<Vec<&str>>();
         let action = split.get(0).unwrap().to_string();
-        let duration = utils::to_int(split.get(1).unwrap().to_string());
-        let command = Command{action:action,duration:duration};
+        let units = utils::to_int(split.get(1).unwrap().to_string());
+        let command = Command{action:action,units:units};
         match command.action.as_ref() {
-            "forward" => submarine.horizontal = submarine.horizontal + command.duration,
-            "up" => submarine.depth = submarine.depth - command.duration,
-            "down" => submarine.depth = submarine.depth + command.duration,
+            "forward" => {
+                submarine.horizontal = submarine.horizontal + command.units;
+                submarine.depth = submarine.depth + (submarine.aim * command.units);
+            },
+            "up" => {
+                submarine.aim = submarine.aim - command.units
+            },
+            "down" => submarine.aim = submarine.aim + command.units,
             _ => println!("missing action {}", command.action),
         }
 
