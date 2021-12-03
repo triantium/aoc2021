@@ -8,18 +8,20 @@ pub fn get_result() -> isize {
     let gamma=get_gamma(report.clone());
     let epsilon=get_epsilon(report.clone());
     getPowerConsumption(report.clone());
-    let o2=getOxygenRating(report.clone());
+    let o2=get_oxygen_rating(report.clone());
     let co2 = get_co2_rating(report.clone());
 
-    let life_support= (o2*23)*(co2*10);
+    let power_consuption= gamma*epsilon;
+    let life_support= (o2)*(co2);
 
+    println!("Power_Consumption: {}",power_consuption);
     println!("Lifesupport: {}",life_support);
 
 
     return life_support;
 }
 
-fn getOxygenRating (lines: Vec<String> ) -> isize {
+fn get_oxygen_rating (lines: Vec<String> ) -> isize {
     let len = lines.get(0).unwrap().len();
     let mut index = 0;
     //let mut results: Vec<String>= Vec::new();
@@ -37,7 +39,7 @@ fn filter_oxygen_rating (lines: Vec<String>, index:usize ) -> String {
     if lines.len() == 1 {
         return results.pop().unwrap();
     }
-    let bit = mostCommonBit(results,index);
+    let bit = most_common_bit(results,index);
     let meh = results2.iter()
         .filter(|line|{
         let mut chars=line.chars();
@@ -58,7 +60,7 @@ fn get_gamma(lines: Vec<String> ) -> isize{
         for tmp in results.iter(){
             vec.push(tmp.clone());
         }
-        gamma_rate.push(mostCommonBit(vec,i));
+        gamma_rate.push(most_common_bit(vec,i));
     }
     println!("Gamma: Ob{}",gamma_rate);
     let gamma = isize::from_str_radix(gamma_rate.borrow(), 2).unwrap();
@@ -74,7 +76,7 @@ fn get_epsilon(lines: Vec<String> ) -> isize{
         for tmp in results.iter(){
             vec.push(tmp.clone());
         }
-        epsilon_rate.push(leastCommon(vec,i));
+        epsilon_rate.push(least_common_bit(vec,i));
     }
     println!("Epsilon: Ob{}",epsilon_rate);
     let epsilon = isize::from_str_radix(epsilon_rate.borrow(), 2).unwrap();
@@ -99,7 +101,7 @@ fn filter_co2_rating (lines: Vec<String>, index:usize ) -> String {
     if lines.len() == 1 {
         return results.pop().unwrap();
     }
-    let bit = leastCommon(results,index);
+    let bit = least_common_bit(results,index);
     let meh = results2.iter()
         .filter(|line|{
             let mut chars=line.chars();
@@ -111,7 +113,7 @@ fn filter_co2_rating (lines: Vec<String>, index:usize ) -> String {
 
 }
 
-fn mostCommonBit(lines: Vec<String> , index: usize) -> char {
+fn most_common_bit(lines: Vec<String> , index: usize) -> char {
     let mut ones=0;
     let mut zeros = 0;
 
@@ -138,29 +140,12 @@ fn mostCommonBit(lines: Vec<String> , index: usize) -> char {
     }
 }
 
-fn leastCommon(lines: Vec<String> , index: usize) -> char {
-    let mut ones=0;
-    let mut zeros = 0;
-
-    for line in lines.iter() {
-        let mut chars=line.chars();
-        let chara = chars.nth(index).unwrap();
-        match chara {
-            '0'  => {
-                zeros+=1;
-            },
-            '1'  => {
-                ones+=1;
-            },
-            _ => panic!("WTF")
-        }
-
-    }
-    if zeros > ones {
-        return '1';
-    }else{
-        // if equal
-        return '0';
+fn least_common_bit(lines: Vec<String> , index: usize) -> char {
+    let most = most_common_bit(lines,index);
+    match most {
+        '0' => return '1',
+        '1' => return '0',
+        _ => panic!("WTV")
     }
 }
 
