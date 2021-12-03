@@ -16,6 +16,7 @@ struct Command {
 
 
 fn main() {
+    day2::get_result();
     day3::get_result();
 }
 
