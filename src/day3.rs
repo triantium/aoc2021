@@ -5,6 +5,8 @@ pub fn get_result() -> isize {
     let report=utils::read_file("inputs/3.txt");
     let len = report.get(0).unwrap().len();
 
+    let gamma=get_gamma(report.clone());
+    let epsilon=get_epsilon(report.clone());
     getPowerConsumption(report.clone());
     let o2=getOxygenRating(report.clone());
     let co2 = get_co2_rating(report.clone());
@@ -23,6 +25,7 @@ fn getOxygenRating (lines: Vec<String> ) -> isize {
     //let mut results: Vec<String>= Vec::new();
     let mut results = lines.clone();
     let last_one = filter_oxygen_rating(results,0);
+    println!("Oxygen Rating: 0b{}",last_one);
     let oxygenRating = isize::from_str_radix(last_one.borrow(), 2).unwrap();
     println!("Oxygen Rating: {}",oxygenRating);
     return oxygenRating;
@@ -46,12 +49,45 @@ fn filter_oxygen_rating (lines: Vec<String>, index:usize ) -> String {
 
 }
 
+fn get_gamma(lines: Vec<String> ) -> isize{
+    let mut results = lines.clone();
+    let len = lines.get(0).unwrap().len();
+    let mut gamma_rate = String::new();
+    for i in 0..len {
+        let mut vec = Vec::new();
+        for tmp in results.iter(){
+            vec.push(tmp.clone());
+        }
+        gamma_rate.push(mostCommonBit(vec,i));
+    }
+    println!("Gamma: Ob{}",gamma_rate);
+    let gamma = isize::from_str_radix(gamma_rate.borrow(), 2).unwrap();
+    return gamma;
+}
+
+fn get_epsilon(lines: Vec<String> ) -> isize{
+    let mut results = lines.clone();
+    let len = lines.get(0).unwrap().len();
+    let mut epsilon_rate = String::new();
+    for i in 0..len {
+        let mut vec = Vec::new();
+        for tmp in results.iter(){
+            vec.push(tmp.clone());
+        }
+        epsilon_rate.push(leastCommon(vec,i));
+    }
+    println!("Epsilon: Ob{}",epsilon_rate);
+    let epsilon = isize::from_str_radix(epsilon_rate.borrow(), 2).unwrap();
+    return epsilon;
+}
+
 fn get_co2_rating (lines: Vec<String> ) -> isize {
     let len = lines.get(0).unwrap().len();
     let mut index = 0;
     //let mut results: Vec<String>= Vec::new();
     let mut results = lines.clone();
     let last_one = filter_co2_rating(results,0);
+    println!("Co Rating: 0b{}",last_one);
     let rating = isize::from_str_radix(last_one.borrow(), 2).unwrap();
     println!("Co2 Rating: {}",rating);
     return rating;
@@ -120,11 +156,11 @@ fn leastCommon(lines: Vec<String> , index: usize) -> char {
         }
 
     }
-    if zeros >= ones {
+    if zeros > ones {
+        return '1';
+    }else{
         // if equal
         return '0';
-    }else{
-        return '1';
     }
 }
 
@@ -162,6 +198,8 @@ fn getPowerConsumption (lines: Vec<String>) -> isize{
             panic!("Damn")
         }
     }
+    println!("Epsilon: Ob{}",epsilon_rate);
+    println!("Gamma: Ob{}",gamma_rate);
     let gamma = isize::from_str_radix(gamma_rate.borrow(), 2).unwrap();
     let epsilon = isize::from_str_radix(epsilon_rate.borrow(), 2).unwrap();
     let power_consumption = gamma * epsilon;
