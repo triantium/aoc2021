@@ -53,6 +53,30 @@ impl BingoBoard {
         }
         return false;
     }
+
+    fn mark_value(&mut self, value: u32) -> bool{
+        let mut marked=false;
+        for row in self.rows.iter_mut() {
+            for cell in row.iter_mut(){
+                if cell.value == value {
+                    cell.marked = true;
+                    marked=true;
+                }
+            }
+        }
+        return marked;
+    }
+    fn board_score(&self) -> u32{
+        let mut score= 0;
+        for row in self.rows.iter() {
+            for cell in row.iter(){
+                if !cell.marked {
+                    score = score + cell.value
+                }
+            }
+        }
+        return score;
+    }
 }
 
 #[cfg(test)]
@@ -85,6 +109,31 @@ mod tests {
             rows: [[Cell{value:0,marked:false},Cell{value:1,marked:true},Cell{value:0,marked:false},Cell{value:0,marked:false},Cell{value:0,marked:false}];5]
         };
         assert!(vertical.is_finished());
+
+        return;
+    }
+
+    #[test]
+    fn test_marking() {
+
+        let mut board = BingoBoard::new();
+        let marked = board.mark_value(0);
+        assert!(marked);
+        let marked = board.mark_value(10);
+        assert!(!marked);
+
+        return;
+    }
+    #[test]
+    fn test_boardscore() {
+
+        let board = BingoBoard::new();
+        let score = board.board_score();
+        assert_eq!(score, 0);
+        let score = BingoBoard{
+            rows: [[Cell{value:1,marked:false},Cell{value:1,marked:true},Cell{value:2,marked:false},Cell{value:3,marked:false},Cell{value:4,marked:false}];5]
+        }.board_score();
+        assert_eq!(score, 50);
 
         return;
     }
