@@ -2,18 +2,20 @@
 
 #[derive(Copy, Clone)]
 struct Cell{
-    value: u32,
+    value: i32,
     marked: bool,
 }
 
+#[derive(Copy, Clone)]
 struct BingoBoard{
     rows: [[Cell;5];5]
 }
 
+
 impl BingoBoard {
     fn new() -> BingoBoard{
         return BingoBoard{
-            rows: [[Cell{value:0,marked:false};5];5]
+            rows: [[Cell{value:404,marked:false};5];5]
         }
     }
 
@@ -54,7 +56,7 @@ impl BingoBoard {
         return false;
     }
 
-    fn mark_value(&mut self, value: u32) -> bool{
+    fn mark_value(&mut self, value: i32) -> bool{
         let mut marked=false;
         for row in self.rows.iter_mut() {
             for cell in row.iter_mut(){
@@ -66,7 +68,7 @@ impl BingoBoard {
         }
         return marked;
     }
-    fn board_score(&self) -> u32{
+    fn board_score(&self) -> i32{
         let mut score= 0;
         for row in self.rows.iter() {
             for cell in row.iter(){
@@ -89,17 +91,75 @@ fn read_bingo_numbers (line: &String) -> Vec<i32>{
     return bingo_numbers;
 }
 
+fn read_row_numbers (line: &String) -> Vec<i32>{
+    let mut numbers = Vec::new();
+    let raw_inputs=line.split_whitespace().collect::<Vec<&str>>();
+    for raw in raw_inputs.iter() {
+        let z = (raw.to_string()).parse::<i32>().unwrap();
+        numbers.push(z);
+    }
+    return numbers;
+}
+
+fn setup_boards (lines: Vec<String>) -> Vec<BingoBoard>{
+    let mut boards = Vec::new();
+
+    let mut board = BingoBoard::new();
+    let mut row_number=0;
+    for i in 1..lines.len() {
+        let line=lines.get(i).unwrap();
+        if line.is_empty(){
+            // simly accept that one board is unusable
+            boards.push(board);
+            board=BingoBoard::new();
+            row_number=0;
+        } else{
+            let numbers = read_row_numbers(line);
+            assert_eq!(numbers.len(),board.rows[row_number].len());
+            for i in 0..(numbers.len()-1) {
+                board.rows[row_number][i].value=numbers.get(i).unwrap().clone();
+            }
+            row_number= row_number + 1;
+        }
+    }
+    return boards;
+}
+
+fn play_game(bingo_numbers: Vec<i32>,boards: Vec<BingoBoard>) -> (i32, i32){
+    let mut myboards=boards.clone();
+    for number in bingo_numbers {
+        for board in myboards.iter_mut() {
+            board.mark_value(number);
+            if board.is_finished() {
+                return (number,board.board_score());
+            }
+        }
+
+    }
+    // Better errorcode
+    panic!("Should not get here");
+    // return (0,BingoBoard::new());
+}
+
 #[cfg(test)]
 mod tests {
+    use std::borrow::Borrow;
     use crate::{utils};
-    use crate::day4::{BingoBoard, Cell, read_bingo_numbers};
+    use crate::day4::{BingoBoard, Cell, play_game, read_bingo_numbers, setup_boards};
 
     #[test]
     fn part1() {
         println!("--- DAY 4-1 ----");
+        println!("Lets Play Bingo!");
         let _input = utils::read_file("inputs/4.txt");
         let line = _input.first().unwrap();
-        let bingoNumbers = read_bingo_numbers(line);
+        let bingo_numbers = read_bingo_numbers(line);
+        let boards = setup_boards(_input);
+        let (number,board)=play_game(bingo_numbers,boards);
+        let board_score=board;
+        let game_score=board_score*number;
+        println!("Finalscore {} * {} = {}",number,board_score,game_score);
+        assert_eq!(game_score,0)
 
 
 
@@ -132,7 +192,7 @@ mod tests {
     fn test_marking() {
 
         let mut board = BingoBoard::new();
-        let marked = board.mark_value(0);
+        let marked = board.mark_value(404);
         assert!(marked);
         let marked = board.mark_value(10);
         assert!(!marked);
@@ -144,7 +204,7 @@ mod tests {
 
         let board = BingoBoard::new();
         let score = board.board_score();
-        assert_eq!(score, 0);
+        assert_eq!(score, 25*404);
         let score = BingoBoard{
             rows: [[Cell{value:1,marked:false},Cell{value:1,marked:true},Cell{value:2,marked:false},Cell{value:3,marked:false},Cell{value:4,marked:false}];5]
         }.board_score();
