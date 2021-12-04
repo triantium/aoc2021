@@ -79,15 +79,30 @@ impl BingoBoard {
     }
 }
 
+fn read_bingo_numbers (line: &String) -> Vec<i32>{
+    let mut bingo_numbers = Vec::new();
+    let raw_inputs=line.split(",").collect::<Vec<&str>>();
+    for raw in raw_inputs.iter() {
+        let z = (raw.to_string()).parse::<i32>().unwrap();
+        bingo_numbers.push(z);
+    }
+    return bingo_numbers;
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{utils};
-    use crate::day4::{BingoBoard, Cell};
+    use crate::day4::{BingoBoard, Cell, read_bingo_numbers};
 
     #[test]
     fn part1() {
         println!("--- DAY 4-1 ----");
         let _input = utils::read_file("inputs/4.txt");
+        let line = _input.first().unwrap();
+        let bingoNumbers = read_bingo_numbers(line);
+
+
+
     }
 
     #[test]
