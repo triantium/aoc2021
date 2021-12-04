@@ -7,7 +7,7 @@ mod tests {
 
     #[test]
     fn part1() {
-        println!("---DAY 3-1----");
+        println!("--- DAY 3-1 ----");
         let report=utils::read_file("inputs/3.txt");
         let gamma=day3::get_gamma(report.clone());
         let epsilon=day3::get_epsilon(report.clone());
@@ -18,7 +18,7 @@ mod tests {
 
     #[test]
     fn part2() {
-        println!("---DAY 3-1----");
+        println!("--- DAY 3-2 ----");
         let report=utils::read_file("inputs/3.txt");
         let o2=day3::get_oxygen_rating(report.clone());
         let co2 = day3::get_co2_rating(report.clone());
