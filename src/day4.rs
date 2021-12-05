@@ -1,6 +1,6 @@
 //use crate::{utils};
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone,Debug)]
 struct Cell{
     value: i32,
     marked: bool,
@@ -10,6 +10,19 @@ struct Cell{
 struct BingoBoard{
     rows: [[Cell;5];5]
 }
+
+// impl fmt::Display for BingoBoard {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         // Use `self.number` to refer to each positional data point.
+//         for row in self.rows.iter() {
+//             write!(f, "[");
+//             for cell in row.iter(){
+//                 write!(f, "{} ", cell.value);
+//             }
+//             write!(f, "]\n");
+//         }
+//     }
+// }
 
 
 impl BingoBoard {
@@ -116,12 +129,13 @@ fn setup_boards (lines: Vec<String>) -> Vec<BingoBoard>{
         } else{
             let numbers = read_row_numbers(line);
             assert_eq!(numbers.len(),board.rows[row_number].len());
-            for i in 0..(numbers.len()-1) {
+            for i in 0..(numbers.len()) {
                 board.rows[row_number][i].value=numbers.get(i).unwrap().clone();
             }
             row_number= row_number + 1;
         }
     }
+    boards.push(board);
     return boards;
 }
 
@@ -131,6 +145,7 @@ fn play_game(bingo_numbers: Vec<i32>,boards: Vec<BingoBoard>) -> (i32, i32){
         for board in myboards.iter_mut() {
             board.mark_value(number);
             if board.is_finished() {
+                //println!("{}",board);
                 return (number,board.board_score());
             }
         }
@@ -143,7 +158,6 @@ fn play_game(bingo_numbers: Vec<i32>,boards: Vec<BingoBoard>) -> (i32, i32){
 
 #[cfg(test)]
 mod tests {
-    use std::borrow::Borrow;
     use crate::{utils};
     use crate::day4::{BingoBoard, Cell, play_game, read_bingo_numbers, setup_boards};
 
@@ -159,7 +173,11 @@ mod tests {
         let board_score=board;
         let game_score=board_score*number;
         println!("Finalscore {} * {} = {}",number,board_score,game_score);
-        assert_eq!(game_score,0)
+
+        // Wronganswers
+        assert_ne!(game_score,134505);
+        // To low
+        //assert_ne!(game_score,42630);
 
 
 
