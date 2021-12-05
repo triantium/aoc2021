@@ -23,6 +23,112 @@ impl Line {
         self.a.x == self.b.x
     }
 
+    fn points (&self) -> Vec<Point>{
+        let mut points = Vec::new();
+
+
+        if self.a.x <= self.b.x {
+            for x in self.a.x..=self.b.x {
+                if self.a.y <= self.b.y {
+                    for y in self.a.y..=self.b.y {
+                        points.push(Point{
+                            x,y
+                        });
+                    }
+                } else {
+                    for y in self.b.y..=self.a.y {
+                        points.push(Point{
+                            x,y
+                        });
+                    }
+                }
+            }
+        } else {
+            for x in self.b.x..=self.a.x {
+                if self.a.y <= self.b.y {
+                    for y in self.a.y..=self.b.y {
+                        points.push(Point{
+                            x,y
+                        });
+                    }
+                } else {
+                    for y in self.b.y..=self.a.y {
+                        points.push(Point{
+                            x,y
+                        });
+                    }
+                }
+            }
+        }
+
+        assert!(!points.is_empty());
+        return points
+    }
+
+    fn second_points (&self) -> Vec<Point>{
+        let mut points = Vec::new();
+        if self.is_vertical(){
+            let x = self.a.x;
+            if self.a.y <= self.b.y {
+                for y in self.a.y..=self.b.y {
+                    points.push(Point{
+                        x,y
+                    });
+                }
+            } else {
+                for y in self.b.y..=self.a.y {
+                    points.push(Point{
+                        x,y
+                    });
+                }
+            }
+        } else if self.is_horizontal() {
+            let y = self.a.y;
+            if self.a.x <= self.b.x {
+                for x in self.a.x..=self.b.x {
+                    points.push(Point{
+                        x,y
+                    });
+                }
+            } else {
+                for x in self.b.x..=self.a.x {
+                    points.push(Point{
+                        x,y
+                    });
+                }
+            }
+        } else { //just diagonal
+            let mut x = self.a.x;
+            let mut y = self.a.y;
+            while x != self.b.x && y != self.b.y {
+                points.push(Point{
+                    x,y
+                });
+                if x < self.b.x {
+                    x += 1 ;
+                }
+                if x > self.b.x {
+                    x -= 1 ;
+                }
+                if y < self.b.y {
+                    y += 1 ;
+                }
+                if y > self.b.y {
+                    y -= 1 ;
+                }
+            }
+            points.push(Point{
+                x,y
+            });
+        }
+
+
+
+
+        assert!(!points.is_empty());
+        return points
+    }
+
 
 }
 
@@ -30,22 +136,28 @@ impl Line {
 
 #[cfg(test)]
 mod tests {
-    use crate::{utils};
+    //use crate::{utils};
     use crate::day5::get_result_1;
+    use crate::day5::get_result_2;
 
     #[test]
     fn part1() {
         println!("--- DAY 5-1 ----");
         let result_test=get_result_1("inputs/5_test.txt");
         assert_eq!(result_test,5);
-        let result_test=get_result_1("inputs/5.txt");
-
+        let result=get_result_1("inputs/5.txt");
+        println!("Hot Spots :{} ", result);
+        assert_eq!(result,6856)
     }
 
     #[test]
     fn part2() {
-        println!("--- DAY 4-2 ----");
-        //let input = utils::read_file("inputs/4.txt");
+        println!("--- DAY 5-2 ----");
+        let result_test=get_result_2("inputs/5_test.txt");
+        assert_eq!(result_test,12);
+        let result=get_result_2("inputs/5.txt");
+        println!("Hot Spots :{} ", result);
+        assert_eq!(result,20666)
     }
 }
 
@@ -61,9 +173,7 @@ fn get_result_1 (file: &str) -> usize{
     let map = draw_lines(filtered_lines);
     let mut values = Vec::new();
     for row in map.iter(){
-        println!();
         for cell in row.iter() {
-            print!("{}",cell);
             if cell.to_owned() >= 2 {
                 values.push(cell);
             }
@@ -71,10 +181,35 @@ fn get_result_1 (file: &str) -> usize{
     }
 
 
+    return values.len();
+}
 
+fn get_result_2 (file: &str) -> usize{
+    let input = utils::read_file(file);
+    let lines: Vec<Line> = read_lines(input);
+
+    let map = draw_lines(lines);
+    let mut values = Vec::new();
+    for row in map.iter(){
+        for cell in row.iter() {
+            if cell.to_owned() >= 2 {
+                values.push(cell);
+            }
+        }
+    }
 
 
     return values.len();
+}
+
+fn _print_map (map: Vec<Vec<i32>>) {
+    for row in map.iter(){
+        println!();
+        for cell in row.iter() {
+            print!("{}",cell);
+        }
+    }
+    println!();
 }
 
 fn read_lines (input: Vec<String>) -> Vec<Line>{
@@ -120,12 +255,11 @@ fn draw_lines (lines: Vec<Line>) -> Vec<Vec<i32>>{
         map.push(line);
     }
     for line in lines{
-        for x in line.a.x..=line.b.x {
-            for y in line.a.y..=line.b.y {
-                let mut current =map.get_mut(x as usize).unwrap().get_mut(y as usize).unwrap();
-                *current += 1;
-                //map.get_mut(x as usize).unwrap().get_mut(y as usize).unwrap() = current;
-            }
+        for point in line.second_points() {
+            let current = map
+                .get_mut(point.y as usize).unwrap()
+                .get_mut(point.x as usize).unwrap();
+            *current += 1;
         }
     }
 
