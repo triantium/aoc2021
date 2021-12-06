@@ -95,6 +95,16 @@ impl BingoBoard {
         }
         return score;
     }
+
+    fn _print(&self) {
+        println!("---------");
+        for row in self.rows.iter() {
+            for cell in row.iter() {
+                print!("{:0>2},{} |", cell.value, cell.marked)
+            }
+            println!();
+        }
+    }
 }
 
 fn read_bingo_numbers(line: &String) -> Vec<i32> {
@@ -149,6 +159,7 @@ fn play_game(bingo_numbers: Vec<i32>, boards: Vec<BingoBoard>) -> (i32, i32) {
             board.mark_value(number);
             if board.is_finished() {
                 //println!("{}",board);
+                //board._print();
                 return (number, board.board_score());
             }
         }
@@ -162,12 +173,20 @@ fn get_result_1(file: &str) -> i32 {
     let input = utils::read_file(file);
     let line = input.first().unwrap();
     let bingo_numbers = read_bingo_numbers(line);
+    for nu in bingo_numbers.iter() {
+        print!("{},", nu);
+    }
+    println!();
     let boards = setup_boards(input);
+
+    // for board in boards.iter() {
+    //     board.print();
+    // }
 
     let (number, board) = play_game(bingo_numbers, boards);
     let board_score = board;
     let game_score = board_score * number;
-    println!("Finalscore {} * {} = {}", number, board_score, game_score);
+    println!("Finalscore {} * {} = {}", board_score, number, game_score);
 
     return game_score;
 }
@@ -188,7 +207,7 @@ mod tests {
         // Wronganswers
         assert_ne!(game_score, 134505);
         // To low
-        assert_ne!(game_score, 42630);
+        assert!(game_score > 86130);
     }
 
     #[test]

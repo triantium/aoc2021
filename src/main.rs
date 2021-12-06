@@ -1,9 +1,9 @@
-
-mod utils;
 mod day2;
 mod day3;
 mod day4;
 mod day5;
+mod day6;
+mod utils;
 
 struct Submarine {
     horizontal: i32,
@@ -16,10 +16,7 @@ struct Command {
     units: i32,
 }
 
-
 fn main() {
     day2::get_result();
     day3::get_result();
 }
-
-
