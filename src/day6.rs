@@ -1,8 +1,7 @@
 use crate::utils;
 
 #[derive(Copy, Clone, Debug)]
-struct Fish_School {
-    timer: usize,
+struct FishSchool {
     count: u64,
 }
 
@@ -31,10 +30,14 @@ mod tests {
     fn part1() {
         println!("--- DAY 6-1 ----");
         let result_test = day6::_get_result_2("inputs/6_test.txt", 80);
+        let result_test_1 = day6::_get_result_1("inputs/6_test.txt", 80);
         assert_eq!(result_test, 5934);
+        assert_eq!(result_test, result_test_1 as u64);
         let result = day6::_get_result_2("inputs/6.txt", 80);
+        let result_1 = day6::_get_result_1("inputs/6.txt", 80);
         println!("Hot Lanternfish : {} ", result);
-        assert_eq!(result, 389726)
+        assert_eq!(result, 389726);
+        assert_eq!(result,result_1 as u64);
     }
 
     #[test]
@@ -44,7 +47,7 @@ mod tests {
         assert_eq!(result_test, 26984457539);
         let result = day6::_get_result_2("inputs/6.txt", 256);
         println!("Hot Lanternfish : {} ", result);
-        assert_eq!(result, 1743335992042)
+        assert_eq!(result, 1743335992042);
     }
 }
 
@@ -71,13 +74,9 @@ fn _get_result_1(file: &str, days: u16) -> usize {
 fn _get_result_2(file: &str, days: u16) -> u64 {
     let input = utils::read_file(file);
     let fishes: Vec<Fish> = read_lines(input);
-    let mut school: [Fish_School; 10] = [Fish_School {
+    let mut school: [FishSchool; 10] = [FishSchool {
         count: 0,
-        timer: 10,
     }; 10];
-    for i in 0..school.len() {
-        school[i].timer = i;
-    }
     for fish in fishes.iter() {
         school[fish.timer].count += 1;
     }
@@ -94,7 +93,10 @@ fn _get_result_2(file: &str, days: u16) -> u64 {
         school[9].count = 0;
     }
 
-    let count: u64 = school.iter().map(|f| f.count).reduce(|a, b| a + b).unwrap();
+    let count: u64 = school.iter()
+      .map(|f| f.count)
+      .reduce(|a, b| a + b)
+      .unwrap();
 
     return count;
 }
