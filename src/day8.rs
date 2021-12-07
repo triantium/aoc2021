@@ -29,7 +29,7 @@ mod tests {
 
 fn _get_result_1(file: &str) -> usize {
     let input = utils::read_file(file);
-    let  _numbers: Vec<i32> = read_lines(input);
+    let  _numbers: Vec<i32> = _read_lines(input);
 
     return 0;
 }
@@ -50,7 +50,7 @@ fn _print_map(map: Vec<Vec<i32>>) {
     println!();
 }
 
-fn read_lines(input: Vec<String>) -> Vec<i32> {
+fn _read_lines(input: Vec<String>) -> Vec<i32> {
     let fishes = input
         .get(0)
         .unwrap()
