@@ -3,7 +3,7 @@ use crate::utils;
 
 #[cfg(test)]
 mod tests {
-    use crate::day7;
+    //use crate::day7;
 
     #[test]
     fn part1() {
@@ -29,12 +29,12 @@ mod tests {
 
 fn _get_result_1(file: &str) -> usize {
     let input = utils::read_file(file);
-    let mut numbers: Vec<i32> = read_lines(input);
+    let  _numbers: Vec<i32> = read_lines(input);
 
     return 0;
 }
 
-fn _get_result_2(file: &str, days: u16) -> u64 {
+fn _get_result_2(file: &str) -> u64 {
     let _input = utils::read_file(file);
 
     return 0;
