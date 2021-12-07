@@ -1,3 +1,4 @@
+use std::cmp::{max, min};
 use crate::utils;
 
 
@@ -11,7 +12,8 @@ mod tests {
         let result_test = day7::_get_result_1("inputs/7_test.txt");
         assert_eq!(result_test, 37);
         let result = day7::_get_result_1("inputs/7.txt");
-        assert_eq!(result, 389726);
+        println!("Minimum Fuel: {}", result)
+        assert_eq!(result, 356922);
     }
 
     #[test]
@@ -27,9 +29,23 @@ mod tests {
 
 fn _get_result_1(file: &str) -> i32 {
     let input = utils::read_file(file);
-    let mut numbers: Vec<i32> = read_lines(input);
+    let crabfishes: Vec<i32> = read_lines(input);
+    let max = crabfishes.iter()
+        .reduce(|a, b| max(a, b)).unwrap();
+    let mut fuel_consumptions = Vec::new();
+    for _i in 0..*max {
+        fuel_consumptions.push(0);
+    }
+    for i in 0..fuel_consumptions.len() {
+        for crabfish in crabfishes.iter() {
+            let fuel = i32::abs((i as i32) - crabfish);
+            fuel_consumptions[i] += fuel;
+        }
+    }
+    let min_fuel = fuel_consumptions.iter()
+        .reduce(|a, b| min(a, b)).unwrap();
 
-    return 0;
+    return *min_fuel;
 }
 
 fn _get_result_2(file: &str, days: u16) -> u64 {
