@@ -9,11 +9,9 @@ mod tests {
     fn part1() {
         println!("--- DAY 7-1 ----");
         let result_test = day7::_get_result_1("inputs/7_test.txt");
-        assert_eq!(result_test, 5934);
-        assert_eq!(result_test, result_test_1 as u64);
+        assert_eq!(result_test, 37);
         let result = day7::_get_result_1("inputs/7.txt");
         assert_eq!(result, 389726);
-        assert_eq!(result,result_1 as u64);
     }
 
     #[test]
@@ -27,16 +25,17 @@ mod tests {
     }
 }
 
-fn _get_result_1(file: &str) -> usize {
+fn _get_result_1(file: &str) -> i32 {
     let input = utils::read_file(file);
     let mut numbers: Vec<i32> = read_lines(input);
 
-
+    return 0;
 }
 
 fn _get_result_2(file: &str, days: u16) -> u64 {
     let _input = utils::read_file(file);
 
+    return 0;
 }
 
 fn _print_map(map: Vec<Vec<i32>>) {
@@ -49,7 +48,7 @@ fn _print_map(map: Vec<Vec<i32>>) {
     println!();
 }
 
-fn read_lines(input: Vec<String>) -> Vec<Fish> {
+fn read_lines(input: Vec<String>) -> Vec<i32> {
     let fishes = input
         .get(0)
         .unwrap()
@@ -57,6 +56,6 @@ fn read_lines(input: Vec<String>) -> Vec<Fish> {
         .map(|s| s.to_string())
         .map(|s| s.parse::<i32>().unwrap())
         //.map(|s| Fish { timer: s })
-        .collect::<Vec<Fish>>();
+        .collect::<Vec<i32>>();
     return fishes;
 }

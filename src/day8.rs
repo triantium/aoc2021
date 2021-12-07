@@ -31,12 +31,13 @@ fn _get_result_1(file: &str) -> usize {
     let input = utils::read_file(file);
     let mut numbers: Vec<i32> = read_lines(input);
 
-
+    return 0;
 }
 
 fn _get_result_2(file: &str, days: u16) -> u64 {
     let _input = utils::read_file(file);
 
+    return 0;
 }
 
 fn _print_map(map: Vec<Vec<i32>>) {
@@ -49,7 +50,7 @@ fn _print_map(map: Vec<Vec<i32>>) {
     println!();
 }
 
-fn read_lines(input: Vec<String>) -> Vec<Fish> {
+fn read_lines(input: Vec<String>) -> Vec<i32> {
     let fishes = input
         .get(0)
         .unwrap()
@@ -57,6 +58,6 @@ fn read_lines(input: Vec<String>) -> Vec<Fish> {
         .map(|s| s.to_string())
         .map(|s| s.parse::<i32>().unwrap())
         //.map(|s| Fish { timer: s })
-        .collect::<Vec<Fish>>();
+        .collect::<Vec<i32>>();
     return fishes;
 }
