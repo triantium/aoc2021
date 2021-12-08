@@ -34,8 +34,11 @@ impl Wiring {
                 _ => map.insert(code.to_string(), 42),
             };
         }
-        // get Count
+
         /* Distribution of Segments
+
+           distribution/index
+
                 8/0
            ───────────
          │            │
