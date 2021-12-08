@@ -57,25 +57,25 @@ impl Wiring {
         values.insert(3, three.to_string());
         map.insert(three.to_string(), 3);
 
-        let mut display:[char;7]=['0';7];
+        let mut display: [char; 7] = ['0'; 7];
         // map To Single Lines
         let line0 = difference(
             values.get(&1).unwrap().to_string()
             , values.get(&7).unwrap().to_string());
-        assert_eq!(line0.len(),1);
-        display[0]=line0.first().map(|k|*k).unwrap();
+        assert_eq!(line0.len(), 1);
+        display[0] = line0.first().map(|k| *k).unwrap();
         let line4 = difference(
             values.get(&9).unwrap().to_string()
             , values.get(&3).unwrap().to_string());
-        assert_eq!(line4.len(),1);
-        display[4]=line4.first().map(|k|*k).unwrap();
+        assert_eq!(line4.len(), 1);
+        display[4] = line4.first().map(|k| *k).unwrap();
 
         //2
         let two = self.coding.keys()
             .map(|s| s.to_string())
             .filter(|key| key.len() == 5) //5,6,9
-            .filter(|key|key != three)
-            .filter(|key|has_chars(key.to_string(),display[4].to_string()))
+            .filter(|key| key != three)
+            .filter(|key| has_chars(key.to_string(), display[4].to_string()))
             .collect::<Vec<String>>();
         assert_eq!(two.len(), 1);
 
@@ -86,8 +86,8 @@ impl Wiring {
         let five = self.coding.keys()
             .map(|s| s.to_string())
             .filter(|key| key.len() == 5) //5,6,9
-            .filter(|key|key != three)
-            .filter(|key|key != two)
+            .filter(|key| key != three)
+            .filter(|key| key != two)
             .collect::<Vec<String>>();
         assert_eq!(five.len(), 1);
         let five = five.first().unwrap();
@@ -97,27 +97,39 @@ impl Wiring {
         let tmp = difference(
             values.get(&5).unwrap().to_string()
             , values.get(&8).unwrap().to_string());
-        assert_eq!(tmp.len(),2);
+        assert_eq!(tmp.len(), 2);
         let line2 = difference(
             display[4].to_string()
             , tmp.iter().collect());
-        assert_eq!(line2.len(),1);
-        display[2]=line2.first().map(|k|*k).unwrap();
+        assert_eq!(line2.len(), 1);
+        display[2] = line2.first().map(|k| *k).unwrap();
 
         //line3
 
-        //6
-        // let six = self.coding.keys()
-        //     .map(|s| s.to_string())
-        //     .filter(|key| key.len() == 6)//0,6,9
-        //     .filter(|key|key != nine)
-        //     .filter(|key|has_chars(key.to_string(),display[2].to_string()))
-        //     .collect::<Vec<String>>();
-        // assert_eq!(six.len(), 1);
-        // let six = six.first().unwrap();
-        // values.insert(5, six.to_string());
-        // map.insert(six.to_string(), 5);
+        //6 5 differenz zur 1, 0 hat 6 differenz
+        let one = values.get(&1).unwrap();
+        let zero = self.coding.keys()
+            .map(|s| s.to_string())
+            .filter(|key| key.len() == 6)//0,6,9
+            .filter(|key| key != nine)
+            .filter(|key| difference(key.to_string(), one.to_string()).len() == 6)
+            .collect::<Vec<String>>();
+        assert_eq!(zero.len(), 1);
+        let zero = zero.first().unwrap();
+        values.insert(0, zero.to_string());
+        map.insert(zero.to_string(), 0);
 
+        //6
+        let six = self.coding.keys()
+            .map(|s| s.to_string())
+            .filter(|key| key.len() == 6)//0,6,9
+            .filter(|key| key != nine)
+            .filter(|key| key != zero)
+            .collect::<Vec<String>>();
+        assert_eq!(six.len(), 1);
+        let six = six.first().unwrap();
+        values.insert(0, six.to_string());
+        map.insert(six.to_string(), 6);
 
 
         self.coding = map;
@@ -138,9 +150,13 @@ impl Wiring {
 
     fn sum(&self) -> u64 {
         let mut sum = 0;
+        let mut exp = 0;
         for i in (0..self.decode.len()).rev() {
-            let deka = (10 * (i + 1)) as u64;
-            sum += deka * (self.decode[i] as u64);
+            let base: u64 = 10;
+            let deka = base.pow(exp as u32);
+            let multi = self.decode[i] as u64;
+            sum += deka * multi;
+            exp += 1;
         }
 
         return sum;
@@ -171,13 +187,15 @@ fn difference(a: String, b: String) -> Vec<char> {
             map.insert(c, 0);
         }
     }
-    return map.keys().map(|k|*k).collect();
+    return map.keys().map(|k| *k).collect();
 }
 
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
     use crate::day8;
+    use crate::day8::Wiring;
 
     #[test]
     fn part1() {
@@ -196,7 +214,22 @@ mod tests {
         let result_test = day8::get_result_2("inputs/8_test.txt");
         assert_eq!(result_test, 61229);
         let result = day8::get_result_2("inputs/8.txt");
+        assert!(result > 954737);
         assert_eq!(result, 1);
+    }
+
+    #[test]
+    fn sum_up() {
+        let mut wire = Wiring { encode: Vec::new(), coding: HashMap::new(), decode: Vec::new() };
+
+        wire.decode.push(1);
+        assert_eq!(wire.sum(), 1);
+        wire.decode.push(2);
+        assert_eq!(wire.sum(), 12);
+        wire.decode.push(3);
+        assert_eq!(wire.sum(), 123);
+        wire.decode.push(4);
+        assert_eq!(wire.sum(), 1234)
     }
 }
 
