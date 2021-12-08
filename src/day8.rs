@@ -226,7 +226,7 @@ mod tests {
         // assert_eq!(result_test, result_test_1 as u64);
         let result = day8::get_result_1("inputs/8.txt");
         assert_eq!(result, 355);
-        // assert_eq!(result,result_1 as u64);
+        println!("Result: {}",result);
     }
 
     #[test]
@@ -249,6 +249,7 @@ mod tests {
         let (result,_) = day8::get_result_2("inputs/8.txt");
         assert!(result > 954737);
         assert_eq!(result, 983030);
+        println!("Result: {}",result);
     }
 
     #[test]
