@@ -65,6 +65,8 @@ impl Wiring {
 
         let display = decode_display(distribution,values);
 
+        // And now be a busy honeybee
+
         let zero = [display[0],display[1],display[2],display[4],display[5],display[6]];
         let mut zero_s = String::new();
         zero.iter().for_each(|c|zero_s.push(*c));
