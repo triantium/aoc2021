@@ -60,39 +60,37 @@ impl Wiring {
             }
         }
 
-        let mut display = ['0'; 7];
+        let display = decode_display(distribution,values);
 
-        for entry in distribution.iter() {
-            match entry.1 {
-                4 => {
-                    display[4] = *entry.0;
-                }
-                6 => {
-                    display[1] = *entry.0;
-                }
-                9 => {
-                    display[5] = *entry.0;
-                }
-                // a bissl komplexa
-                7 => {
-                    let four = values.get(&4).unwrap();
-                    if !has_chars(four.to_string(), (*entry.0).to_string()) {
-                        display[6] = *entry.0;
-                    } else {
-                        display[3] = *entry.0;
-                    }
-                }
-                8 => {
-                    let one = values.get(&1).unwrap().to_string();
-                    if !has_chars(one, (*entry.0).to_string()) {
-                        display[0] = *entry.0;
-                    } else {
-                        display[2] = *entry.0;
-                    }
-                }
-                _ => {}
-            }
-        }
+        let zero = [display[0],display[1],display[2],display[4],display[5],display[6]];
+        let mut zero_s = String::new();
+        zero.iter().for_each(|c|zero_s.push(*c));
+        map.insert(sort_string(zero_s),0);
+
+        let two = [display[0],display[2],display[3],display[4],display[6]];
+        let mut two_s = String::new();
+        two.iter().for_each(|c|two_s.push(*c));
+        map.insert(sort_string(two_s),2);
+
+        let three = [display[0],display[2],display[3],display[5],display[6]];
+        let mut three_s = String::new();
+        three.iter().for_each(|c|three_s.push(*c));
+        map.insert(sort_string(three_s),3);
+
+        let five = [display[0],display[1],display[3],display[5],display[6]];
+        let mut five_s = String::new();
+        five.iter().for_each(|c|five_s.push(*c));
+        map.insert(sort_string(five_s),5);
+
+        let six = [display[0],display[1],display[3],display[4],display[5],display[6]];
+        let mut six_s = String::new();
+        six.iter().for_each(|c|six_s.push(*c));
+        map.insert(sort_string(six_s),6);
+
+        let nine = [display[0],display[1],display[2],display[3],display[5],display[6]];
+        let mut nine_s = String::new();
+        nine.iter().for_each(|c|nine_s.push(*c));
+        map.insert(sort_string(nine_s),9);
 
 
         self.coding = map;
@@ -124,6 +122,43 @@ impl Wiring {
 
         return sum;
     }
+}
+
+fn decode_display(distribution:HashMap<char,i32>,values:HashMap<i32,String>)->[char;7]{
+    let mut display = ['0'; 7];
+
+    for entry in distribution.iter() {
+        match entry.1 {
+            4 => {
+                display[4] = *entry.0;
+            }
+            6 => {
+                display[1] = *entry.0;
+            }
+            9 => {
+                display[5] = *entry.0;
+            }
+            // a bissl komplexa
+            7 => {
+                let four = values.get(&4).unwrap();
+                if !has_chars(four.to_string(), (*entry.0).to_string()) {
+                    display[6] = *entry.0;
+                } else {
+                    display[3] = *entry.0;
+                }
+            }
+            8 => {
+                let one = values.get(&1).unwrap().to_string();
+                if !has_chars(one, (*entry.0).to_string()) {
+                    display[0] = *entry.0;
+                } else {
+                    display[2] = *entry.0;
+                }
+            }
+            _ => {}
+        }
+    }
+    return display;
 }
 
 fn has_chars(a: String, b: String) -> bool {
@@ -165,16 +200,17 @@ mod tests {
         let mut wiring = read_line("acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf".to_string());
         wiring.setup_map();
 
+
+        assert_eq!(*wiring.coding.get(&day8::sort_string_str("cagedb")).unwrap(), 0);
+        assert_eq!(*wiring.coding.get(&day8::sort_string_str("dab")).unwrap(), 7);
+        assert_eq!(*wiring.coding.get(&day8::sort_string_str("eafb")).unwrap(), 4);
+        assert_eq!(*wiring.coding.get(&day8::sort_string_str("ab")).unwrap(), 1);
         assert_eq!(*wiring.coding.get(&day8::sort_string_str("acedgfb")).unwrap(), 8);
         assert_eq!(*wiring.coding.get(&day8::sort_string_str("cdfbe")).unwrap(), 5);
         assert_eq!(*wiring.coding.get(&day8::sort_string_str("gcdfa")).unwrap(), 2);
         assert_eq!(*wiring.coding.get(&day8::sort_string_str("fbcad")).unwrap(), 3);
-        assert_eq!(*wiring.coding.get(&day8::sort_string_str("dab")).unwrap(), 7);
         assert_eq!(*wiring.coding.get(&day8::sort_string_str("cefabd")).unwrap(), 9);
         assert_eq!(*wiring.coding.get(&day8::sort_string_str("cdfgeb")).unwrap(), 6);
-        assert_eq!(*wiring.coding.get(&day8::sort_string_str("eafb")).unwrap(), 4);
-        assert_eq!(*wiring.coding.get(&day8::sort_string_str("cagedb")).unwrap(), 0);
-        assert_eq!(*wiring.coding.get(&day8::sort_string_str("ab")).unwrap(), 1);
 
         wiring.decode();
 
@@ -182,38 +218,38 @@ mod tests {
     }
 
 
-    // #[test]
-    // fn part1() {
-    //     println!("--- DAY 8-1 ----");
-    //     let result_test = day8::get_result_1("inputs/8_test.txt");
-    //     assert_eq!(result_test, 26);
-    //     // assert_eq!(result_test, result_test_1 as u64);
-    //     let result = day8::get_result_1("inputs/8.txt");
-    //     assert_eq!(result, 355);
-    //     // assert_eq!(result,result_1 as u64);
-    // }
-    //
-    // #[test]
-    // fn part2() {
-    //     println!("--- DAY 8-2 ----");
-    //     let (result_test,testwire) = day8::get_result_2("inputs/8_test.txt");
-    //
-    //     assert_eq!(testwire.get(0).unwrap().sum(),8394);
-    //     assert_eq!(testwire.get(1).unwrap().sum(),9781);
-    //     assert_eq!(testwire.get(2).unwrap().sum(),1197);
-    //     assert_eq!(testwire.get(3).unwrap().sum(),9361);
-    //     assert_eq!(testwire.get(4).unwrap().sum(),4873);
-    //     assert_eq!(testwire.get(5).unwrap().sum(),8418);
-    //     assert_eq!(testwire.get(6).unwrap().sum(),4548);
-    //     assert_eq!(testwire.get(7).unwrap().sum(),1625);
-    //     assert_eq!(testwire.get(8).unwrap().sum(),8717);
-    //     assert_eq!(testwire.get(9).unwrap().sum(),4315);
-    //
-    //     assert_eq!(result_test, 61229);
-    //     let (result,_) = day8::get_result_2("inputs/8.txt");
-    //     assert!(result > 954737);
-    //     assert_eq!(result, 1);
-    // }
+    #[test]
+    fn part1() {
+        println!("--- DAY 8-1 ----");
+        let result_test = day8::get_result_1("inputs/8_test.txt");
+        assert_eq!(result_test, 26);
+        // assert_eq!(result_test, result_test_1 as u64);
+        let result = day8::get_result_1("inputs/8.txt");
+        assert_eq!(result, 355);
+        // assert_eq!(result,result_1 as u64);
+    }
+
+    #[test]
+    fn part2() {
+        println!("--- DAY 8-2 ----");
+        let (result_test,testwire) = day8::get_result_2("inputs/8_test.txt");
+
+        assert_eq!(testwire.get(0).unwrap().sum(),8394);
+        assert_eq!(testwire.get(1).unwrap().sum(),9781);
+        assert_eq!(testwire.get(2).unwrap().sum(),1197);
+        assert_eq!(testwire.get(3).unwrap().sum(),9361);
+        assert_eq!(testwire.get(4).unwrap().sum(),4873);
+        assert_eq!(testwire.get(5).unwrap().sum(),8418);
+        assert_eq!(testwire.get(6).unwrap().sum(),4548);
+        assert_eq!(testwire.get(7).unwrap().sum(),1625);
+        assert_eq!(testwire.get(8).unwrap().sum(),8717);
+        assert_eq!(testwire.get(9).unwrap().sum(),4315);
+
+        assert_eq!(result_test, 61229);
+        let (result,_) = day8::get_result_2("inputs/8.txt");
+        assert!(result > 954737);
+        assert_eq!(result, 983030);
+    }
 
     #[test]
     fn sum_up() {
