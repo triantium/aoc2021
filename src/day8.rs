@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use crate::utils;
 
-struct Wiring {
+pub struct Wiring {
     coding: HashMap<String, u8>,
     encode: Vec<String>,
     decode: Vec<u8>,
@@ -117,7 +117,7 @@ impl Wiring {
         assert_eq!(zero.len(), 1);
         let zero = zero.first().unwrap();
         values.insert(0, zero.to_string());
-        map.insert(zero.to_string(), 0);
+        map.insert(zero.to_string(), 6);
 
         //6
         let six = self.coding.keys()
@@ -129,7 +129,7 @@ impl Wiring {
         assert_eq!(six.len(), 1);
         let six = six.first().unwrap();
         values.insert(0, six.to_string());
-        map.insert(six.to_string(), 6);
+        map.insert(six.to_string(), 0);
 
 
         self.coding = map;
@@ -211,9 +211,21 @@ mod tests {
     #[test]
     fn part2() {
         println!("--- DAY 8-2 ----");
-        let result_test = day8::get_result_2("inputs/8_test.txt");
+        let (result_test,testwire) = day8::get_result_2("inputs/8_test.txt");
+
+        assert_eq!(testwire.get(0).unwrap().sum(),8394);
+        assert_eq!(testwire.get(1).unwrap().sum(),9781);
+        assert_eq!(testwire.get(2).unwrap().sum(),1197);
+        assert_eq!(testwire.get(3).unwrap().sum(),9361);
+        assert_eq!(testwire.get(4).unwrap().sum(),4873);
+        assert_eq!(testwire.get(5).unwrap().sum(),8418);
+        assert_eq!(testwire.get(6).unwrap().sum(),4548);
+        assert_eq!(testwire.get(7).unwrap().sum(),1625);
+        assert_eq!(testwire.get(8).unwrap().sum(),8717);
+        assert_eq!(testwire.get(9).unwrap().sum(),4315);
+
         assert_eq!(result_test, 61229);
-        let result = day8::get_result_2("inputs/8.txt");
+        let (result,_) = day8::get_result_2("inputs/8.txt");
         assert!(result > 954737);
         assert_eq!(result, 1);
     }
@@ -281,21 +293,23 @@ pub fn get_result_1(file: &str) -> usize {
     return decodings.len();
 }
 
-pub fn get_result_2(file: &str) -> u64 {
+pub fn get_result_2(file: &str) -> (u64,Vec<Wiring>) {
     let mut wirings = read_file(file);
     for wiring in wirings.iter_mut() {
         wiring.setup_map();
         wiring.decode();
     }
 
+
+
     let sum = wirings
-        .into_iter()
+        .iter()
         .map(|w| w.sum())
         .reduce(|a, b| (a + b))
         .unwrap();
 
 
-    return sum;
+    return (sum,wirings);
 }
 
 fn sort_string(wordy: String) -> String {
