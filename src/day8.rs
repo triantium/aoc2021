@@ -30,13 +30,13 @@ impl Wiring {
 
     fn decode(&mut self) {
         let mut decode=Vec::with_capacity(self.encode.len());
-        for chifrat in self.encode.iter(){
-            let value = self.coding.get(&chifrat.to_string());
+        for i in 0..self.encode.len(){
+            let chiffrat = self.encode.get(i).unwrap().clone();
+            let value = self.coding.get(&chiffrat);
             match value {
                 None => {},
                 Some(a) => {decode.push(*a)},
             }
-
         }
         self.decode=decode;
     }
@@ -80,10 +80,13 @@ fn read_file(file:&str) -> Vec<Wiring> {
             .collect::<Vec<String>>();
         let wirings = split.get(0).unwrap()
             .split_whitespace()
-            .collect::<Vec<&str>>();
+            .map(|s| s.to_string())
+            .map(|s|sort_string(s))
+            .collect::<Vec<String>>();
         let output = split.get(1).unwrap()
             .split_whitespace()
             .map(|s| s.to_string())
+            .map(|s|sort_string(s))
             .collect::<Vec<String>>();
         let mut wiring = Wiring{
             coding: HashMap::with_capacity(10),
@@ -91,7 +94,7 @@ fn read_file(file:&str) -> Vec<Wiring> {
             encode: output,
         };
         for x in wirings {
-            wiring.coding.insert(x.to_string(),42);
+            wiring.coding.insert(x,42);
         }
         results.push(wiring);
     }
@@ -119,6 +122,16 @@ pub fn get_result_2(file: &str) -> u64 {
     let _input = utils::read_file(file);
 
     return 0;
+}
+
+fn sort_string (wordy: String) -> String{
+    let s_slice: &str = &wordy[..];
+    let mut chars: Vec<char> = s_slice.chars().collect();
+    chars.sort_by(|a, b| b.cmp(a));
+
+    //println!("test{:?}", chars);
+    let s:String = chars.into_iter().collect();
+   return s;
 }
 
 fn _print_map(map: Vec<Vec<i32>>) {
