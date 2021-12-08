@@ -35,7 +35,7 @@ impl Wiring {
             };
         }
         // get Count
-        /* Verteilungshäufigkeit
+        /* Distribution of Segments
                 8/0
            ───────────
          │            │
@@ -114,9 +114,9 @@ impl Wiring {
         let mut exp = 0;
         for i in (0..self.decode.len()).rev() {
             let base: u64 = 10;
-            let deka = base.pow(exp as u32);
+            let deca = base.pow(exp as u32);
             let multi = self.decode[i] as u64;
-            sum += deka * multi;
+            sum += deca * multi;
             exp += 1;
         }
 
@@ -186,6 +186,90 @@ fn _difference(a: String, b: String) -> Vec<char> {
         }
     }
     return map.keys().map(|k| *k).collect();
+}
+
+pub fn get_result_1(file: &str) -> usize {
+    let mut wirings = read_file(file);
+    for wiring in wirings.iter_mut() {
+        wiring.setup_map();
+        wiring.decode();
+    }
+
+    let decodings = wirings
+        .into_iter()
+        .map(|w| w.decode)
+        .flatten()
+        .filter(|n| *n == 1 || *n == 4 || *n == 8 || *n == 7)
+        .collect::<Vec<u8>>();
+
+    return decodings.len();
+}
+
+pub fn get_result_2(file: &str) -> (u64, Vec<Wiring>) {
+    let mut wirings = read_file(file);
+    for wiring in wirings.iter_mut() {
+        wiring.setup_map();
+        wiring.decode();
+    }
+
+
+    let sum = wirings
+        .iter()
+        .map(|w| w.sum())
+        .reduce(|a, b| (a + b))
+        .unwrap();
+
+    return (sum, wirings);
+}
+
+fn read_file(file: &str) -> Vec<Wiring> {
+    let input = utils::read_file(file);
+    let mut results = Vec::with_capacity(input.len());
+    for line in input.iter() {
+        let wiring = read_line(line.to_string());
+        results.push(wiring);
+    }
+    return results;
+}
+
+fn read_line(line: String) -> Wiring {
+    let split = line.split("|")
+        .map(|s| s.to_string())
+        //.map(|s| Fish { timer: s })
+        .collect::<Vec<String>>();
+    let wirings = split.get(0).unwrap()
+        .split_whitespace()
+        .map(|s| s.to_string())
+        .map(|s| sort_string(s))
+        .collect::<Vec<String>>();
+    let output = split.get(1).unwrap()
+        .split_whitespace()
+        .map(|s| s.to_string())
+        .map(|s| sort_string(s))
+        .collect::<Vec<String>>();
+    let mut wiring = Wiring {
+        coding: HashMap::with_capacity(10),
+        decode: Vec::with_capacity(4),
+        encode: output,
+    };
+    for x in wirings {
+        wiring.coding.insert(x, 42);
+    }
+    return wiring;
+}
+
+fn sort_string(wordy: String) -> String {
+    let s_slice: &str = &wordy[..];
+    return sort_string_str(s_slice);
+}
+
+fn sort_string_str(wordy: &str) -> String {
+    let mut chars: Vec<char> = wordy.chars().collect();
+    chars.sort_by(|a, b| b.cmp(a));
+
+    //println!("test{:?}", chars);
+    let s: String = chars.into_iter().collect();
+    return s;
 }
 
 
@@ -266,100 +350,4 @@ mod tests {
         assert_eq!(wire.sum(), 1234)
     }
 }
-
-fn read_line(line: String) -> Wiring {
-    let split = line.split("|")
-        .map(|s| s.to_string())
-        //.map(|s| Fish { timer: s })
-        .collect::<Vec<String>>();
-    let wirings = split.get(0).unwrap()
-        .split_whitespace()
-        .map(|s| s.to_string())
-        .map(|s| sort_string(s))
-        .collect::<Vec<String>>();
-    let output = split.get(1).unwrap()
-        .split_whitespace()
-        .map(|s| s.to_string())
-        .map(|s| sort_string(s))
-        .collect::<Vec<String>>();
-    let mut wiring = Wiring {
-        coding: HashMap::with_capacity(10),
-        decode: Vec::with_capacity(4),
-        encode: output,
-    };
-    for x in wirings {
-        wiring.coding.insert(x, 42);
-    }
-    return wiring;
-}
-
-fn read_file(file: &str) -> Vec<Wiring> {
-    let input = utils::read_file(file);
-    let mut results = Vec::with_capacity(input.len());
-    for line in input.iter() {
-        let wiring = read_line(line.to_string());
-        results.push(wiring);
-    }
-    return results;
-}
-
-pub fn get_result_1(file: &str) -> usize {
-    let mut wirings = read_file(file);
-    for wiring in wirings.iter_mut() {
-        wiring.setup_map();
-        wiring.decode();
-    }
-
-    let decodings = wirings
-        .into_iter()
-        .map(|w| w.decode)
-        .flatten()
-        .filter(|n| *n == 1 || *n == 4 || *n == 8 || *n == 7)
-        .collect::<Vec<u8>>();
-
-    return decodings.len();
-}
-
-pub fn get_result_2(file: &str) -> (u64, Vec<Wiring>) {
-    let mut wirings = read_file(file);
-    for wiring in wirings.iter_mut() {
-        wiring.setup_map();
-        wiring.decode();
-    }
-
-
-    let sum = wirings
-        .iter()
-        .map(|w| w.sum())
-        .reduce(|a, b| (a + b))
-        .unwrap();
-
-
-    return (sum, wirings);
-}
-
-fn sort_string(wordy: String) -> String {
-    let s_slice: &str = &wordy[..];
-    return sort_string_str(s_slice);
-}
-
-fn sort_string_str(wordy: &str) -> String {
-    let mut chars: Vec<char> = wordy.chars().collect();
-    chars.sort_by(|a, b| b.cmp(a));
-
-    //println!("test{:?}", chars);
-    let s: String = chars.into_iter().collect();
-    return s;
-}
-
-fn _print_map(map: Vec<Vec<i32>>) {
-    for row in map.iter() {
-        println!();
-        for cell in row.iter() {
-            print!("{}", cell);
-        }
-    }
-    println!();
-}
-
 
