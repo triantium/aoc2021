@@ -1,6 +1,5 @@
 use std::borrow::BorrowMut;
 use std::collections::HashMap;
-use std::iter::Map;
 use crate::utils;
 
 struct Wiring {
@@ -55,7 +54,7 @@ mod tests {
         assert_eq!(result_test, 26);
         // assert_eq!(result_test, result_test_1 as u64);
         let result = day8::get_result_1("inputs/8.txt");
-        // assert_eq!(result, 389826);
+        assert_eq!(result, 355);
         // assert_eq!(result,result_1 as u64);
     }
 
