@@ -21,4 +21,6 @@ struct Command {
 fn main() {
     day2::get_result();
     day3::get_result();
+    day8::get_result_1("inputs/8_test.txt");
+    day8::get_result_2("inputs/8_test.txt");
 }
