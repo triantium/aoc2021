@@ -35,10 +35,15 @@ pub fn get_result_2(file: &str) -> u64 {
         }
     }
     let heigtmap = heigtmap.as_mut();
-    //let _basins =
-    search_basins(heigtmap, low_points);
-
-    return 0 as u64;
+    let basins = search_basins(heigtmap, low_points);
+    let mut scores= Vec::new();
+    for basin in basins {
+        scores.push(basin.len());
+    }
+    scores.sort();
+    scores.reverse();
+    let score = scores[0] * scores[1] * scores[2];
+    return score as u64;
 }
 
 fn is_low_point(heightmap: &Vec<Vec<(u8, bool)>>, x: usize, y: usize) -> Option<u8> {
@@ -76,12 +81,14 @@ fn is_low_point(heightmap: &Vec<Vec<(u8, bool)>>, x: usize, y: usize) -> Option<
     return Option::Some(point_val);
 }
 
-fn search_basins(heightmap: &mut Vec<Vec<(u8, bool)>>, starting_points: Vec<(usize, usize)>) {
+fn search_basins(heightmap: &mut Vec<Vec<(u8, bool)>>, starting_points: Vec<(usize, usize)>) -> Vec<Vec<u8>> {
+    let mut basins = Vec::new();
     for point in starting_points.iter() {
         let point = *point;
         let point = (point.0 as i64, point.1 as i64);
-        track_point(point, heightmap);
+        basins.push(track_point(point, heightmap));
     }
+    return basins;
 }
 
 fn track_point(point: (i64, i64), heightmap: &mut Vec<Vec<(u8, bool)>>) -> Vec<u8> {
@@ -106,9 +113,15 @@ fn track_point(point: (i64, i64), heightmap: &mut Vec<Vec<(u8, bool)>>) -> Vec<u
     //all else need to be marked and returned after checking the surroundings
 
     heightmap[point.0 as usize][point.1 as usize].1=true;
+    let mut vec: Vec<u8> = Vec::new();
+    vec.push(actual_point.0);
+    //checkup
+    vec.extend(track_point((point.0 - 1,point.1),heightmap));
+    vec.extend(track_point((point.0,point.1 - 1),heightmap));
+    vec.extend(track_point((point.0 + 1,point.1),heightmap));
+    vec.extend(track_point((point.0,point.1 + 1),heightmap));
 
 
-    let vec: Vec<u8> = Vec::new();
     return vec;
 }
 
@@ -153,8 +166,8 @@ mod tests {
         // assert_eq!(result_test, result_test_1 as u64);
         let result = day9::get_result_2("inputs/9.txt");
 
-        println!("Basinsize: {}", result);
-        assert_eq!(result, 516);
+        println!("Basinsizes: {}", result);
+        assert_eq!(result, 1023660);
     }
 }
 
