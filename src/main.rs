@@ -6,6 +6,7 @@ mod day6;
 mod day7;
 mod utils;
 mod day8;
+mod day9;
 
 struct Submarine {
     horizontal: i32,
